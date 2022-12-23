@@ -1,5 +1,6 @@
 import time
 
+from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivymd.app import MDApp
 from kivy.lang import Builder
@@ -10,37 +11,39 @@ kv = """
 #: import labels labels
 
 <CameraClick>:
-    orientation: 'vertical'
-    Label: 
-        height: "1dp"
-        valign: "top"
     Camera:
         id: camera
-        resolution: (100,100)
+        resolution: (640,380)
         allow_stretch: True
         keep_ratio: True
         play: True
-    MDRoundFlatButton:
-        text: 'Capture'
-        size_hint_y: None
-        halign: "center"
-        height: '48dp'
-        on_press: root.capture()
+    AnchorLayout:
+        anchor_x: "center"
+        anchor_y: "bottom" 
+        MDRoundFlatButton:
+            text: 'Capture'
+            height: '48dp'
+            on_press: root.capture()
+
+   
 
 Screen:
-    BoxLayout:
-        orientation: 'vertical'
-        MDTopAppBar:
-            title: "Würfler"
-            left_action_items: [["menu", lambda x: nav_draw.set_state()]]
-        Widget:
     MDNavigationLayout:    
+    
         ScreenManager:
             id: screen_manager
+            
             Screen:
                 name: "scr-score"
-
-                CameraClick:
+                
+                BoxLayout:
+                    orientation: "vertical"
+                    
+                    MDTopAppBar: 
+                        title: "Würfler"
+                        left_action_items: [["menu", lambda x: nav_drawer.set_state("open")]]
+                
+                    CameraClick:
 
             Screen:
                 name: "scr-rules"
@@ -58,12 +61,9 @@ Screen:
                         halign: "left"
                         valign: "top"
                         text: labels.rules
-
-
-
-
+                    
         MDNavigationDrawer:
-            id: nav_draw
+            id: nav_drawer
             orientation: "vertical"
             padding: "8dp"
             spacing: "8dp"
@@ -95,7 +95,7 @@ Screen:
                 MDList:
                     OneLineAvatarListItem:
                         on_press:
-                            nav_draw.set_state("close")
+                            nav_drawer.set_state("close")
                             screen_manager.current = "scr-score"
 
                         text: "Scoring"
@@ -104,7 +104,7 @@ Screen:
 
                     OneLineAvatarListItem:
                         on_press:
-                            nav_draw.set_state("close")
+                            nav_drawer.set_state("close")
                             screen_manager.current = "scr-rules"
                         text: "Rules"
                         IconLeftWidget:
@@ -114,7 +114,7 @@ Screen:
 """
 
 
-class CameraClick(BoxLayout):
+class CameraClick(AnchorLayout):
     def capture(self):
         """
         Function to capture the images and give them the names
