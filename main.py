@@ -1,6 +1,5 @@
 import time
 
-from kivy.core.camera import Camera
 from kivy.uix.boxlayout import BoxLayout
 from kivymd.app import MDApp
 from kivy.lang import Builder
@@ -8,6 +7,8 @@ from kivymd.uix.behaviors.toggle_behavior import MDToggleButton
 from kivymd.uix.button import MDRoundFlatButton
 
 kv = """
+#: import labels labels
+
 <CameraClick>:
     orientation: 'vertical'
     Label: 
@@ -56,7 +57,7 @@ Screen:
                     MDLabel: 
                         halign: "left"
                         valign: "top"
-                        text: "Here are the rules for the Würfelpoker game as played at my grandparents. Here is more for to check everything works fine when showing long text"
+                        text: labels.rules
 
 
 
@@ -115,10 +116,10 @@ Screen:
 
 class CameraClick(BoxLayout):
     def capture(self):
-        '''
+        """
         Function to capture the images and give them the names
         according to their captured time and date.
-        '''
+        """
         camera = self.ids['camera']
         timestr = time.strftime("%Y%m%d_%H%M%S")
         camera.export_to_png("IMG_{}.png".format(timestr))
@@ -133,10 +134,10 @@ class MyToggleButton(MDRoundFlatButton, MDToggleButton):
 
 class CameraClick(BoxLayout):
     def capture(self):
-        '''
+        """
         Function to capture the images and give them the names
         according to their captured time and date.
-        '''
+        """
         camera = self.ids['camera']
         timestr = time.strftime("%Y%m%d_%H%M%S")
         camera.export_to_png("IMG_{}.png".format(timestr))
