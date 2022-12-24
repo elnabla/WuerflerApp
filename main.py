@@ -17,15 +17,15 @@ kv = """
         allow_stretch: True
         keep_ratio: True
         play: True
+
     AnchorLayout:
         anchor_x: "center"
         anchor_y: "bottom" 
+
         MDRoundFlatButton:
             text: 'Capture'
             height: '48dp'
             on_press: root.capture()
-
-   
 
 Screen:
     MDNavigationLayout:    
@@ -40,27 +40,29 @@ Screen:
                     orientation: "vertical"
                     
                     MDTopAppBar: 
-                        title: "Würfler"
+                        title: "Würfler Capture"
                         left_action_items: [["menu", lambda x: nav_drawer.set_state("open")]]
                 
                     CameraClick:
 
             Screen:
                 name: "scr-rules"
-
-                MDBoxLayout: 
-                    adaptive_height: True
-                    adaptive_witdh: True
+                BoxLayout:
                     orientation: "vertical"
-
-                    MDLabel:
-                        text: "Würfler rules"
-                        halign: "center"
-                        valign: "top"
-                    MDLabel: 
-                        halign: "left"
-                        valign: "top"
-                        text: labels.rules
+                    
+                    MDTopAppBar: 
+                        title: "Würfler rules"
+                        left_action_items: [["menu", lambda x: nav_drawer.set_state("open")]]
+                    AnchorLayout:
+                        anchor_y: "top"
+                        padding: dp(8)
+                
+                        MDLabel: 
+                            halign: "left"
+                            valign: "top"
+                            size_hint_y: None
+                            text: labels.rules
+                    Widget:
                     
         MDNavigationDrawer:
             id: nav_drawer
