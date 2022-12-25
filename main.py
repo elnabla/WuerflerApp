@@ -1,7 +1,11 @@
+import threading
+import os
 import time
 
+from kivy.clock import Clock
+from kivy.properties import BooleanProperty
 from kivy.uix.anchorlayout import AnchorLayout
-from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.screenmanager import Screen
 from kivymd.app import MDApp
 from kivy.lang import Builder
 from kivymd.uix.behaviors.toggle_behavior import MDToggleButton
@@ -9,14 +13,12 @@ from kivymd.uix.button import MDRoundFlatButton
 
 from kivy.core.window import Window
 
-
-Window.size = (450, 800) # to see how it looks in portrait mode
-
-current_player = 1
+Window.size = (450, 800)  # to see how it looks in portrait mode
 
 kv = """
 #: import labels labels
 #: import time time 
+#: import NoTransition kivy.uix.screenmanager.NoTransition
 <CameraClick>:
     Camera:
         id: camera
@@ -24,6 +26,28 @@ kv = """
         allow_stretch: True
         keep_ratio: True
         play: True
+        
+<WaitScreen>:  
+    BoxLayout:
+        orientation: "vertical"
+       
+        MDTopAppBar: 
+            title: "Würfler image"
+            left_action_items: [["menu", lambda x: nav_drawer.set_state("open")]]
+        
+        MDLabel:
+            size_hint_y: None
+            halign: "center"
+            text: "Loading image..."
+           
+        MDSpinner:
+            size_hint: None, None
+            size: dp(46), dp(46)
+            pos_hint: {'center_x': .5, 'center_y': .5}
+            active: True 
+        
+            
+        Widget: 
 
     
 
@@ -76,7 +100,7 @@ Screen:
                     MDRoundFlatButton: 
                         text: "next"
                         on_press: screen_manager.current = "scr-camera"           
-                    Widget: 
+                    Widget:
             
             Screen:
                 name: "scr-camera"
@@ -87,8 +111,7 @@ Screen:
                     MDTopAppBar: 
                         title: f"Würfler Capture for {player_name.text}"
                         left_action_items: [["menu", lambda x: nav_drawer.set_state("open")]]
-                
-                    
+                   
                     AnchorLayout:
                         anchor_x: "center"
                         anchor_y: "bottom" 
@@ -101,9 +124,12 @@ Screen:
                             height: '48dp'
                             on_press: 
                                 camera.capture()
-                                time.sleep(1) # TODO: find better solution
-                                screen_manager.current = "scr-show-image"
-                                          
+                                screen_manager.transition = NoTransition()
+                                screen_manager.current = "scr-await-image"
+            
+            WaitScreen: 
+                name: "scr-await-image"        
+                                               
             Screen: 
                 name: "scr-show-image"
                 
@@ -115,15 +141,12 @@ Screen:
                         left_action_items: [["menu", lambda x: nav_drawer.set_state("open")]]
                        
                     MDLabel: 
-                        text: f"The image you just took for {player_name.text}'s score"
-                   
+                        text: f"The image you just took for {player_name.text}'s score"     
                     
                     Image: 
-                        source: f"IMG_player_1.png"
+                        source: f"current-image.png"
                         
-                    Widget: 
-                    
-
+                    Widget:    
 
             Screen:
                 name: "scr-rules"
@@ -198,13 +221,12 @@ Screen:
 
 class CameraClick(AnchorLayout):
     def capture(self):
-        global current_player
         """
         Function to capture the images and give them the names
         according to their captured time and date.
         """
         camera = self.ids['camera']
-        camera.export_to_png(f"IMG_player_{current_player}.png")
+        camera.export_to_png(f"current-image.png")
         print("Captured")
 
 
@@ -214,10 +236,31 @@ class MyToggleButton(MDRoundFlatButton, MDToggleButton):
         self.background_down = self.theme_cls.primary_color
 
 
+class WaitScreen(Screen):
+    image_saved = BooleanProperty(False)
+
+    def __int__(self, **kwargs):
+        super(WaitScreen, self).__init__(**kwargs)
+
+    def on_image_saved(self, instance, value):
+        if self.image_saved:
+            Clock.schedule_once(self.change_screen)
+
+    def change_screen(self, *args):
+        self.parent.current = "scr-show-image"  # should work now
+
+    def on_enter(self, *args):
+        thread = threading.Thread(target=self.check_file)
+        thread.daemon = True
+        thread.start()
+
+    def check_file(self):
+        while not self.image_saved:
+            time.sleep(0.1)
+            self.image_saved = os.path.exists("current-image.png")
 
 
 class Main(MDApp):
-
 
     def build(self):
         return Builder.load_string(kv)
