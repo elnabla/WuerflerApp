@@ -5,6 +5,7 @@
 
 <MyScreen@Screen>:
     nav_drawer: nav_drawer
+
     MDNavigationLayout:
 
         ScreenManager:
@@ -31,6 +32,7 @@
                         id: player_name
                         helper_text: "name"
                         input_type: "text"
+
                     MDRoundFlatButton:
                         text: "next"
                         on_press: screen_manager.current = "scr-camera"
@@ -85,12 +87,14 @@
 
             Screen:
                 name: "scr-rules"
+
                 BoxLayout:
                     orientation: "vertical"
 
                     MDTopAppBar:
                         title: "Würfler rules"
                         left_action_items: [["menu", lambda x: nav_drawer.set_state("open")]]
+
                     AnchorLayout:
                         anchor_y: "top"
                         padding: dp(8)
