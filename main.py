@@ -10,6 +10,10 @@ class MyScreen(Screen):
     pass
 
 
+class StartScreen(Screen):
+    pass
+
+
 class WuerflerNavigationDrawer(MDNavigationDrawer):
     pass
 

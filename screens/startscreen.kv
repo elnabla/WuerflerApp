@@ -1,0 +1,22 @@
+<StartScreen@Screen>:
+    BoxLayout:
+        orientation: "vertical"
+
+        MDTopAppBar:
+            title: "Würfler Start"
+            left_action_items: [["menu", lambda x: app.get_running_app().root.ids['nav_drawer'].set_state("open")]]
+
+        MDLabel:
+            text: "How many players ?"
+
+        MDTextField:
+            id: n_players
+            helper_text: "Number of players"
+            input_filter: "int"
+            input_type: "number"
+
+        MDRoundFlatButton:
+            text: "next"
+            on_press: app.get_running_app().root.ids['screen_manager'].current = "scr-names"
+
+        Widget:

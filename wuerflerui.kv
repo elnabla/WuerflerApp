@@ -1,36 +1,18 @@
 #:kivy 2.1.0
 #:include screens/navigationdrawer.kv
+#:include screens/startscreen.kv
 #:import labels labels
 
 <MyScreen@Screen>:
+    nav_drawer: nav_drawer
     MDNavigationLayout:
 
         ScreenManager:
             id: screen_manager
             camera: camera
 
-            Screen:
+            StartScreen:
                 name: "scr-start"
-
-                BoxLayout:
-                    orientation: "vertical"
-
-                    MDTopAppBar:
-                        title: "Würfler Start"
-                        left_action_items: [["menu", lambda x: nav_drawer.set_state("open")]]
-
-                    MDLabel:
-                        text: "How many players ?"
-
-                    MDTextField:
-                        id: n_players
-                        helper_text: "Number of players"
-                        input_filter: "int"
-                        input_type: "number"
-                    MDRoundFlatButton:
-                        text: "next"
-                        on_press: screen_manager.current = "scr-names"
-                    Widget:
 
             Screen:
                 name: "scr-names"
