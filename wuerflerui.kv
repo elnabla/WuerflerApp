@@ -1,4 +1,6 @@
-#: import labels labels
+#:kivy 2.1.0
+#:include screens/navigationdrawer.kv
+#:import labels labels
 
 <MyScreen@Screen>:
     MDNavigationLayout:
@@ -116,54 +118,7 @@
                             valign: "top"
                             size_hint_y: None
                             text: labels.rules
-                    Widget:
+                        Widget:
 
-        MDNavigationDrawer:
+        WuerflerNavigationDrawer:
             id: nav_drawer
-            orientation: "vertical"
-            padding: "8dp"
-            spacing: "8dp"
-
-            AnchorLayout:
-                anchor_x: "left"
-                size_hint_y: None
-                height: avatar.height
-
-                Image:
-                    id: avatar
-                    size_hint: None, None
-                    size: "56dp", "56dp"
-                    source: "die.png"
-
-            MDLabel:
-                text: "Würfler"
-                font_style: "Button"
-                size_hint_y: None
-                height: self.texture_size[1]
-
-            MDLabel:
-                text: "made by banban"
-                font_style: "Caption"
-                size_hint_y: None
-                height: self.texture_size[1]
-
-            ScrollView:
-                MDList:
-                    OneLineAvatarListItem:
-                        on_press:
-                            nav_drawer.set_state("close")
-                            screen_manager.current = "scr-start"
-
-                        text: "Start scoring"
-                        IconLeftWidget:
-                            icon: "electron-framework"
-
-                    OneLineAvatarListItem:
-                        on_press:
-                            nav_drawer.set_state("close")
-                            screen_manager.current = "scr-rules"
-                        text: "Rules"
-                        IconLeftWidget:
-                            icon: 'information'
-
-            Widget:
