@@ -3,8 +3,7 @@
 *.png
 *.jpg
 
-Training/Images/*
 
 !UI/die.png
 
-/Training/images/annotated/*.json
+/TrainingExperiments/images/annotated/*.json
