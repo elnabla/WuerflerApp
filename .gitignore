@@ -1,0 +1,8 @@
+*.h5
+*.npz
+*.png
+*.jpg
+
+Training/Images/*
+
+!UI/die.png
