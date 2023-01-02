@@ -24,7 +24,7 @@ class DoubleDigitTrainingDataGenerator(keras.utils.Sequence):
         """
         Denotes the number of batches per epoch. This is given directly in our case
         """
-        return self.len
+        return self.length
 
     def __getitem__(self, index):
         """
@@ -32,13 +32,29 @@ class DoubleDigitTrainingDataGenerator(keras.utils.Sequence):
         Generate one batch of the data
         """
         # Generate labels
-        numbers = random.sample(self.possible_numbers, self.batch_size)
+        numbers = random.choices(self.possible_numbers, k=self.batch_size)
 
         # Generate data
         X = [self.digit_generator.generate_number(number) for number in numbers]
-        X = np.concatenate(X, axis=0)
+        X = np.array(X)
+        X = X.astype('float32') / 255  # normalize to [0, 1] range
 
         return X, numbers
+
+    def getitem(self, index):
+        """
+        Index is not needed, but might be needed by parent class...
+        Generate one batch of the data
+        """
+        # Generate labels
+        numbers = random.choices(self.possible_numbers, k=index)
+
+        # Generate data
+        X = [self.digit_generator.generate_number(number) for number in numbers]
+        X = np.array(X)
+        X = X.astype('float32') / 255  # normalize to [0, 1] range
+
+        return X, np.array(numbers)
 
 
 class DoubleDigitDataGenerator:
@@ -46,6 +62,9 @@ class DoubleDigitDataGenerator:
         (X_train, y_train), (_, _) = tk.datasets.mnist.load_data()
         self.mnist_X = X_train
         self.mnist_y = y_train
+        print(X_train.shape)
+        print(y_train.shape)
+
 
     @staticmethod
     def get_by_label(lst, labels, value):
@@ -100,3 +119,5 @@ class DoubleDigitDataGenerator:
 
 if __name__ == "__main__":
     DoubleDigitDataGenerator().plot(42)
+    X, y = DoubleDigitTrainingDataGenerator().getitem__(3)
+    print(X.shape)
