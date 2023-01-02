@@ -6,3 +6,5 @@
 Training/Images/*
 
 !UI/die.png
+
+/Training/images/annotated/*.json
