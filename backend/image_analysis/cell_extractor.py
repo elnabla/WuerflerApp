@@ -55,9 +55,4 @@ class CellExtractor:
         cells = cells.reshape((11, 3, c.CELL_WIDTH, c.CELL_HEIGHT))
         self.cells = cells
 
-    def get_cell(self, row_letter, col):
-        row_dict = {1: 0, 2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 'S': 6, 'F': 7, 'P': 8, 'G': 9, 'DG': 10}
-        if row_letter not in c.ROWS:
-            raise ValueError(f'row_letter must be in {c.ROWS}')
-        row = row_dict[row_letter]
-        return self.cells[row, col, :, :]
+

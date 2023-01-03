@@ -7,15 +7,17 @@ from edge_orientator import EdgeOrientator
 
 class BoxExtractor:
     def __init__(self, image):
-        self.image = image
+        self.image = cv2.resize(image, (1000, 1500))
         self.processed_image = None
         self.points = None
         self.homography = None
 
     def extract_box(self, image_to_transform):
-        """There are different images we might want to use for the extraction:
+        """
+        There are different images we might want to use for the extraction:
         the raw_image, and various transformations thereof
-        It depends on the usage. Keep ip open for now"""
+        It depends on the usage. Keep ip open for now
+        """
         assert (image_to_transform.shape == self.image.shape)
         self.preprocess_image()
         self.locate_gridpoints()
@@ -26,19 +28,17 @@ class BoxExtractor:
 
     def preprocess_image(self):
         # Todo: remove magic numbers
-        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (9, 9))
-        kernel_big = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (19, 19))
-
-        grey = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
-        blur = cv2.GaussianBlur(grey, (11, 11), 0)
-        close = cv2.morphologyEx(blur, cv2.MORPH_CLOSE, kernel)
-        thresh = cv2.adaptiveThreshold(close, 255, 0, 1, 19, 2)
-        self.processed_image = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel_big)
+        #grey = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
+        grey = cv2.fastNlMeansDenoising(self.image, None, 20, 7, 21)
+        grey = cv2.GaussianBlur(grey, (7, 7), 0)
+        self.processed_image = cv2.adaptiveThreshold(grey, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 11, 2)
 
     def locate_gridpoints(self):
-        _, contours, _ = cv2.findContours(self.processed_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (9, 9))
+        thresh2 = cv2.dilate(self.processed_image, kernel, 2)
+        contours, _ = cv2.findContours(self.processed_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-        # Contour with biggest area
+        # Contour with the biggest area
         contour = sorted(contours, key=cv2.contourArea, reverse=True)[0]
 
         perimeter = cv2.arcLength(contour, True)
@@ -46,7 +46,7 @@ class BoxExtractor:
 
         n_points = len(points)
         if n_points != 4:
-            raise GridNotFoundException(f"Found {n_points} instead of 4  :-(")
+            raise GridNotFoundException(f"Found {n_points} grid points instead of 4  :-(")
 
         points = points.reshape((4, 2))
         self.points = points

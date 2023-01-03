@@ -1,6 +1,11 @@
+import os.path
+
 import cv2
+
+from simple_cell_extractor import SimpleCellExtractor
 from box_extractor import BoxExtractor
-from cell_extractor import CellExtractor
+
+import matplotlib.pyplot as plt
 
 
 class CellDetectionPipeline:
@@ -17,7 +22,8 @@ class CellDetectionPipeline:
         self._compute_cells()
 
     def _set_images(self):
-        self.color_image = cv2.imread(self.image_path)
+        self.color_image = cv2.resize(cv2.imread(self.image_path), (1000, 1500))
+        self.image = cv2.cvtColor(self.color_image, cv2.COLOR_BGR2GRAY)
         if self.color_image is None:  # cv2.imread doesn't raise exceptions but return None...
             raise ValueError(f'Could not read image {self.image_path}')
 
@@ -26,5 +32,20 @@ class CellDetectionPipeline:
         self.box = extractor.extract_box(self.image)
 
     def _compute_cells(self):
-        extractor = CellExtractor(self.box)
+        plt.imshow(self.box, cmap='gray')
+        plt.show()
+        extractor = SimpleCellExtractor(self.box)
         self.cells = extractor.compute_cells()
+
+
+if __name__ == "__main__":
+    path = "../uniform_grids/12.jpg"
+    if not os.path.exists(path):
+        print("File not found")
+    pipeline = CellDetectionPipeline(path)
+    pipeline.run()
+    print(len(pipeline.cells))
+    plt.imshow(pipeline.box)
+    plt.show()
+    plt.imshow(pipeline.cell[7])
+    plt.show()
