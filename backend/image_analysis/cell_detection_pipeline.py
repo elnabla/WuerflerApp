@@ -2,8 +2,8 @@ import os.path
 
 import cv2
 
-from simple_cell_extractor import SimpleCellExtractor
-from box_extractor import BoxExtractor
+from backend.image_analysis.simple_cell_extractor import SimpleCellExtractor
+from backend.image_analysis.box_extractor import BoxExtractor
 
 import matplotlib.pyplot as plt
 
@@ -32,8 +32,6 @@ class CellDetectionPipeline:
         self.box = extractor.extract_box()
 
     def _compute_cells(self):
-        plt.imshow(self.box, cmap='gray')
-        plt.show()
         extractor = SimpleCellExtractor(self.box)
         self.cells = extractor.compute_cells()
 

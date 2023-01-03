@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 import backend.constants as c
-from edge_orientator import EdgeOrientator
+from backend.image_analysis.edge_orientator import EdgeOrientator
 from backend.exceptions import BoxNotFoundException
 
 
