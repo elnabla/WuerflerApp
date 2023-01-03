@@ -107,6 +107,6 @@ if __name__ == "__main__":
 
     extractor = BoxExtractor(image)
     extractor.preprocess_image()
-    extractor.locate_gridpoints()
+    extractor.locate_grid_points()
     print(extractor.points)
 

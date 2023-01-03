@@ -29,7 +29,7 @@ class CellDetectionPipeline:
 
     def _compute_box(self):
         extractor = BoxExtractor(self.image)
-        self.box = extractor.extract_box(self.image)
+        self.box = extractor.extract_box()
 
     def _compute_cells(self):
         plt.imshow(self.box, cmap='gray')
@@ -44,8 +44,10 @@ if __name__ == "__main__":
         print("File not found")
     pipeline = CellDetectionPipeline(path)
     pipeline.run()
-    print(len(pipeline.cells))
+    print(pipeline.cells.shape)
     plt.imshow(pipeline.box)
     plt.show()
-    plt.imshow(pipeline.cell[7])
-    plt.show()
+    for j in range(3):
+        for i in range(11):
+            plt.imshow(pipeline.cells[i, j], cmap='gray')
+            plt.show()
