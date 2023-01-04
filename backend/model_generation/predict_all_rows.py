@@ -18,7 +18,6 @@ box = cv2.resize(box, (400, 800))
 box = cv2.cvtColor(box, cv2.COLOR_GRAY2BGR)
 
 
-
 def reverse_prediction(lst, classes):
     if len(classes) == 2:
         # binary classification
@@ -35,10 +34,25 @@ def reverse_prediction(lst, classes):
             current_max = value
     return classes[current_index]
 
+
+actual_values = [
+    [1, 1, 3],
+    [6, 4, 6],
+    [6, 9, 9],
+    [8, 8, 16],
+    [15, 15, 10],
+    [18, 24, 18],
+    [30, 25, 0],
+    [30, 30, 30],
+    [40, 45, 40],
+    [50, 50, 0],
+    [0, 0, 0]
+]
+mistakes = []
 summe = 0
 for i, row in enumerate(c.ROWS) :
     print(row, ' is being processed')
-    path_to_model = os.path.join(c.DATA_PATH, f"simple_model_{row}.h5")
+    path_to_model = os.path.join(c.DATA_PATH, f"simple_model_2_{row}.h5")
     model = keras.models.load_model(path_to_model)
     cells = pipeline.cells[i, :, :, :]
     preds = model.predict(cells)
@@ -46,10 +60,16 @@ for i, row in enumerate(c.ROWS) :
         value = reverse_prediction(pred, c.CLASSES_DICT[row])
         summe += value
         cv2.putText(box, f"{value}", (2*(j*48 + 60), 2*(i*28 + 75)), cv2.FONT_HERSHEY_DUPLEX, 1, (255, 0, 0, 255), 3)
+        actual_value = actual_values[i][j]
+        if actual_value != value:
+            mistakes.append([actual_value, value, [f"{p:.2f}" for p in pred]])
+
+for e in mistakes:
+    print(e)
 cv2.putText(
             box,  # numpy array on which text is written
             f"Total: {summe}",  # text
-            (2*30, 2*390 ),  # position at which writing has to start
+            (2*30, 2*390),  # position at which writing has to start
             cv2.FONT_HERSHEY_SIMPLEX,  # font family
             0.8,  # font size
             (255, 0, 0, 255),  # font color

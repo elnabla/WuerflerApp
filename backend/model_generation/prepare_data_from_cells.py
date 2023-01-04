@@ -17,7 +17,7 @@ for number in c.CLASSES:
     directory = os.path.join(c.CELLS_PATH, str(number))
     for file_name in os.listdir(directory):
         file_path = os.path.join(directory, file_name)
-        cell = cv2.imread(file_path)
+        cell = cv2.imread(file_path, cv2.IMREAD_GRAYSCALE)
         X_data.append(cell)
         y_data.append(number)  # that is so wrong, ... [number]*n ...
     data_name = f"{number}_checked.npz"

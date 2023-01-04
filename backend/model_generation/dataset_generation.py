@@ -13,7 +13,7 @@ from backend.image_analysis.cell_detection_pipeline import CellDetectionPipeline
 from backend.exceptions import BoxNotFoundException
 
 
-TO_EXTRACT = [9]
+TO_EXTRACT = [16]
 
 
 for content in TO_EXTRACT:
